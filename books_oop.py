@@ -1,4 +1,4 @@
-class Book:
+class Book(Object):
 	#Book class constructor
 	def _init_(self, chapters, number_pages, title):
 		self.__chapters = chapters
