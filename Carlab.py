@@ -1,108 +1,58 @@
-class CarClassTest(TestCase):
-    """docstring for CarClassTest"""
-
-    def test_car_instance(self):
-        honda = Car('Honda')
-        self.assertIsInstance(honda, Car, msg='The object should be an instance of the `Car` class')
-
-    def test_object_type(self):
-        honda = Car('Honda')
-        self.assertTrue((type(honda) is Car), msg='The object should be a type of `Car`')
-
-    def test_default_car_name(self):
-        gm = Car()
-        self.assertEqual('General', gm.name,
-                         msg='The car should be called `General` if no name was passed as an argument')
-
-    def test_default_car_model(self):
-        gm = Car()
-        self.assertEqual('GM', gm.model, msg="The car's model should be called `GM` if no model was passed as an argument")
-
-    def test_car_properties(self):
-        toyota = Car('Toyota', 'Corolla')
-        self.assertListEqual(['Toyota', 'Corolla'],
-                             [toyota.name, toyota.model],
-                             msg='The car name and model should be a property of the car')
-
-    def test_car_doors(self):
-        opel = Car('Opel', 'Omega 3')
-        porshe = Car('Porshe', '911 Turbo')
-        self.assertListEqual([opel.num_of_doors,
-                             porshe.num_of_doors,
-                             Car('Koenigsegg', 'Agera R').num_of_doors],
-                             [4, 2, 2],
-                             msg='The car shoud have four (4) doors except its a Porshe or Koenigsegg')
-
-    def test_car_wheels(self):
-        man = Car('MAN', 'Truck', 'trailer')
-        koenigsegg = Car('Koenigsegg', 'Agera R')
-        self.assertEqual([8, 4], [man.num_of_wheels, koenigsegg.num_of_wheels],
-                         msg='The car shoud have four (4) wheels except its a type of trailer')
-
-    def test_car_type(self):
-        koenigsegg = Car('Koenigsegg', 'Agera R')
-        self.assertTrue(koenigsegg.is_saloon(),
-                        msg='The car type should be saloon if it is not a trailer')
-
-    def test_car_speed(self):
-        man = Car('MAN', 'Truck', 'trailer')
-        parked_speed = man.speed
-        moving_speed = man.drive(7).speed
-
-        self.assertListEqual([parked_speed, moving_speed],
-                             [0, 77],
-                             msg='The Trailer should have speed 0 km/h until you put `the pedal to the metal`')
-
-    def test_car_speed2(self):
-        man = Car('Mercedes', 'SLR500')
-        parked_speed = man.speed
-        moving_speed = man.drive(3).speed
-
-        self.assertListEqual([parked_speed, moving_speed],
-                             [0, 1000],
-                             msg='The Mercedes should have speed 0 km/h until you put `the pedal to the metal`')
-
-    def test_drive_car(self):
-        man = Car('MAN', 'Truck', 'trailer')
-        moving_man = man.drive(7)
-        moving_man_instance = isinstance(moving_man, Car)
-        moving_man_type = type(moving_man) is Car
-        self.assertListEqual([True, True, man.speed],
-                             [moving_man_instance, moving_man_type, moving_man.speed],
-                             msg='The car drive function should return the instance of the Car class')
-
-And here is the code that I have so far
-
 class Car(object):
-  speed = 0
+    """docstring for Car"""
+    def __init__(self, name=None, model=None, typ=None):
+        # default speed of a parked car
+        self.speed = 0
 
-  def __init__(self, name='General', model='GM', vehicle_type=None):
-    self.name = name
-    self.model = model
-    self.vehicle_type = vehicle_type
+        # default name is General, unless otherwise
+        if name is None:
+            self.name = 'General'
+            self.num_of_doors = 4
+        else:
+            self.name = name
 
+        # default model is GM, unless otherwise
+        if model is None:
+            self.model = 'GM'
+        else:
+            self.model = model
 
-    if self.name in ['Porshe', 'Koenigsegg']:
-      self.num_of_doors = 2
-    else:
-      self.num_of_doors = 4
+        # default type is saloon, unless otherwise
+        if typ is None:
+            self.typ = 'saloon'
+        else:
+            self.typ = typ
 
-    if self.vehicle_type == 'trailer':
-      self.num_of_wheels = 8
-    else:
-      self.num_of_wheels = 4
+        # trailer has 8 wheels saloon has 4 wheels
+        if typ == 'trailer':
+            self.num_of_wheels = 8
+        else:
+            self.num_of_wheels = 4
 
+        # Porsche & Koennigsegg = 2 doors, default = 4 doors
+        if name is not None and (name == 'Porshe' or name == 'Koenigsegg'):
+            self.num_of_doors = 2
+        elif name is not None and (name != 'Porshe' or name != 'Koenigsegg'):
+            self.num_of_doors = 4
+        else:
+            pass
 
-  def is_saloon(self):
-    if self.vehicle_type is not 'trailer':
-        self.vehicle_type == 'saloon'
-        return True
-    return False
+    def is_saloon(self):
+        # Return true if type is a saloon
+        if self.typ == 'saloon':
+            return True
+        else:
+            return False
 
-  def drive(self, moving_speed):
-    if moving_speed == 3:
-      Car.speed = 1000
-    elif moving_speed == 7:
-      Car.speed = 77
-
-    return self
+    def drive(self, velocity):
+        assert isinstance(velocity, int), "Drive argument must be integer"
+        # trailer speed
+        if self.typ == 'trailer':
+            self.speed = velocity * 11
+            return self
+        # saloon speed
+        elif self.typ == 'saloon':
+            self.speed = 10 ** velocity
+            return self
+        else:
+pass
